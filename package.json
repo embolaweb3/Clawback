@@ -1,0 +1,23 @@
+{
+  "name": "clawback",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Clawback — a private AI advocate that fights bills and subscription disputes on your behalf, with attested execution and independently checkable receipts.",
+  "packageManager": "pnpm@10.26.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "pnpm -r --filter=./packages/** run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dev": "pnpm --filter @clawback/web dev",
+    "lint": "tsc -b --pretty",
+    "clean": "pnpm -r exec rm -rf dist node_modules/.cache"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4",
+    "@types/node": "^22.9.0"
+  }
+}
