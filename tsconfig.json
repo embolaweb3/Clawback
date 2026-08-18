@@ -1,4 +1,8 @@
 {
   "files": [],
-  "references": [{ "path": "packages/shared" }, { "path": "packages/privacy" }]
+  "references": [
+    { "path": "packages/shared" },
+    { "path": "packages/privacy" },
+    { "path": "packages/providers" }
+  ]
 }

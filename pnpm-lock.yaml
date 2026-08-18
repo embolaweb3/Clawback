@@ -24,6 +24,12 @@ importers:
         specifier: workspace:*
         version: link:../shared
 
+  packages/providers:
+    dependencies:
+      '@clawback/shared':
+        specifier: workspace:*
+        version: link:../shared
+
   packages/shared:
     dependencies:
       zod:
