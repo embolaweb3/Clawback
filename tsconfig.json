@@ -3,6 +3,7 @@
   "references": [
     { "path": "packages/shared" },
     { "path": "packages/privacy" },
-    { "path": "packages/providers" }
+    { "path": "packages/providers" },
+    { "path": "packages/payments" }
   ]
 }
