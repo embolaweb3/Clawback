@@ -1,0 +1,13 @@
+{
+  "name": "@clawback/compute",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "dependencies": {
+    "@clawback/shared": "workspace:*",
+    "@0gfoundation/0g-compute-ts-sdk": "^0.9.0",
+    "ethers": "^6.13.4"
+  }
+}

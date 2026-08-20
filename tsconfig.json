@@ -4,6 +4,7 @@
     { "path": "packages/shared" },
     { "path": "packages/privacy" },
     { "path": "packages/providers" },
-    { "path": "packages/payments" }
+    { "path": "packages/payments" },
+    { "path": "packages/compute" }
   ]
 }
