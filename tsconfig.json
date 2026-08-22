@@ -6,6 +6,7 @@
     { "path": "packages/providers" },
     { "path": "packages/payments" },
     { "path": "packages/compute" },
-    { "path": "packages/storage" }
+    { "path": "packages/storage" },
+    { "path": "packages/chain" }
   ]
 }
