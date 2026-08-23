@@ -57,6 +57,12 @@ importers:
         specifier: workspace:*
         version: link:../shared
 
+  packages/receipts:
+    dependencies:
+      '@clawback/shared':
+        specifier: workspace:*
+        version: link:../shared
+
   packages/shared:
     dependencies:
       zod:

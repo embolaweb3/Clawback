@@ -7,6 +7,7 @@
     { "path": "packages/payments" },
     { "path": "packages/compute" },
     { "path": "packages/storage" },
-    { "path": "packages/chain" }
+    { "path": "packages/chain" },
+    { "path": "packages/receipts" }
   ]
 }
