@@ -8,6 +8,7 @@
     { "path": "packages/compute" },
     { "path": "packages/storage" },
     { "path": "packages/chain" },
-    { "path": "packages/receipts" }
+    { "path": "packages/receipts" },
+    { "path": "packages/agent" }
   ]
 }

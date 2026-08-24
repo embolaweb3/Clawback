@@ -18,6 +18,33 @@ importers:
         specifier: ^2.1.4
         version: 2.1.9(@types/node@22.20.1)
 
+  packages/agent:
+    dependencies:
+      '@clawback/chain':
+        specifier: workspace:*
+        version: link:../chain
+      '@clawback/compute':
+        specifier: workspace:*
+        version: link:../compute
+      '@clawback/payments':
+        specifier: workspace:*
+        version: link:../payments
+      '@clawback/privacy':
+        specifier: workspace:*
+        version: link:../privacy
+      '@clawback/providers':
+        specifier: workspace:*
+        version: link:../providers
+      '@clawback/receipts':
+        specifier: workspace:*
+        version: link:../receipts
+      '@clawback/shared':
+        specifier: workspace:*
+        version: link:../shared
+      '@clawback/storage':
+        specifier: workspace:*
+        version: link:../storage
+
   packages/chain:
     dependencies:
       '@clawback/shared':

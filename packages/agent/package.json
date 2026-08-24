@@ -1,0 +1,18 @@
+{
+  "name": "@clawback/agent",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "dependencies": {
+    "@clawback/shared": "workspace:*",
+    "@clawback/privacy": "workspace:*",
+    "@clawback/providers": "workspace:*",
+    "@clawback/compute": "workspace:*",
+    "@clawback/storage": "workspace:*",
+    "@clawback/chain": "workspace:*",
+    "@clawback/payments": "workspace:*",
+    "@clawback/receipts": "workspace:*"
+  }
+}
