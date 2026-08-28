@@ -30,11 +30,16 @@ export function ReceiptCard({
         </div>
       )}
 
-      <h1>{isSuccessful ? "Outcome verified." : "Request completed — not in your favor."}</h1>
+      <h1>{isSuccessful ? "Receipt verified." : "Request completed — not in your favor."}</h1>
       <div className={`hero-number ${isSuccessful ? "" : "unsuccessful"}`}>
         {receipt.claimedSavingsCents > 0 ? centsToDollars(receipt.claimedSavingsCents) : receipt.outcome}
       </div>
       <p>{receipt.outcome}</p>
+      <p style={{ fontSize: "0.85rem", color: "var(--ink-faint)" }}>
+        "Verified" describes the receipt's cryptographic chain, not an independent confirmation
+        that money moved — see "How was this verified?" below for exactly what that does and
+        doesn't cover.
+      </p>
 
       <div className="card">
         <h2>Receipt</h2>
