@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { LifecycleStepper } from "@/components/LifecycleStepper";
 
 const ANALYSIS_STEPS = [
   "Reviewing subscription terms...",
@@ -62,7 +63,10 @@ export default function NewCasePage() {
           The details below are sent to an attested execution path — not stored in the clear
           on our own servers while your case is analyzed.
         </p>
-        <div className="card">
+        <div style={{ marginBottom: "1.5rem" }}>
+          <LifecycleStepper current="ANALYZING" />
+        </div>
+        <div className="card" role="status" aria-live="polite">
           {ANALYSIS_STEPS.map((step, i) => (
             <div key={step} className="progress-line" style={{ opacity: i <= stepIndex ? 1 : 0.35 }}>
               <span className="dot" />
@@ -79,7 +83,15 @@ export default function NewCasePage() {
       <h1>Tell us what happened.</h1>
       <p>We'll investigate the bill and prepare the next action — you approve before anything sends.</p>
 
-      {error && <div className="error-box">{error}</div>}
+      <div style={{ marginBottom: "1.75rem" }}>
+        <LifecycleStepper current="DRAFT" />
+      </div>
+
+      {error && (
+        <div className="error-box" role="alert">
+          {error}
+        </div>
+      )}
 
       <form onSubmit={onSubmit} className="card">
         <div className="field">

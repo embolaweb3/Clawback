@@ -1,8 +1,22 @@
+import { IntegrationBadge } from "@/components/IntegrationStatus";
+
 export default function HowItWorksPage() {
   return (
     <main className="shell">
       <h1>How privacy verification works</h1>
       <p className="lede">Plainly, and without overselling any of it.</p>
+
+      <div className="card" style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap" }}>
+        <span>
+          Compute <IntegrationBadge component="compute" />
+        </span>
+        <span>
+          Storage <IntegrationBadge component="storage" />
+        </span>
+        <span>
+          Chain <IntegrationBadge component="chain" />
+        </span>
+      </div>
 
       <div className="card">
         <h2>What we can prove</h2>

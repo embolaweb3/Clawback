@@ -157,6 +157,8 @@ The live transactions above were executed with funded operator-held wallets that
 
 The application also supports honest unconfigured operation. If 0G credentials are absent, the relevant component degrades visibly rather than pretending that a live 0G operation occurred.
 
+The frontend surfaces this directly: `GET /api/status` reports each integration's actual runtime configuration (configured/unconfigured, and mainnet/testnet when known), and the landing page, "How privacy verification works," and every receipt page read from it live — there is no hardcoded "LIVE" badge anywhere in the UI.
+
 See [.env.example](./.env.example) and [LIMITATIONS.md](./LIMITATIONS.md) for the exact configuration and remaining limitations.
 
 ## 6. Privacy model
