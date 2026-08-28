@@ -52,13 +52,16 @@ fully honest: analysis falls back to a deterministic local template
 (`anchor.storageRootHash` / `anchor.chainTxHash` stay `null`, disclosed), and nothing pretends
 otherwise. This was a deliberate design requirement (build prompt §4), not a shortcut.
 
-## 7. CaseAnchor.sol is not deployed.
+## 7. CaseAnchor.sol deployment is operator-provided, not shipped by this repository.
 
 The contract ships as source (`packages/chain/contracts/CaseAnchor.sol`) and a deployment
-script template (`packages/chain/scripts/deploy.ts`), but this repository does not deploy it —
-that requires a funded key an operator controls, which this environment does not have. Anchoring
-is fully wired in code and will work the moment `ZG_CHAIN_ANCHOR_CONTRACT_ADDRESS` and
-`ZG_CHAIN_PRIVATE_KEY` point at a real deployment.
+script template (`packages/chain/scripts/deploy.ts`). This repository's own `git history`
+contains no deployment — no address is hardcoded anywhere in tracked code. A live instance has
+been deployed and exercised (0G mainnet, chain ID 16661, address `0x91b58e90B9FeCe02952865C1337d64f9ceeC1A25`,
+compiled from this exact unmodified source), with real `anchor()`/`verify()` calls confirmed
+against it, but that deployment lives only in a gitignored `.env` (`ZG_CHAIN_ANCHOR_CONTRACT_ADDRESS`),
+not in this repository. Anyone running this codebase without that variable set gets full, honest
+degradation: `createAnchorClient()` returns `null` and `anchor.chainTxHash` stays `null`.
 
 ## 8. Persistence is file-based, and the settlement ledger is in-memory.
 
@@ -88,3 +91,17 @@ output (`teeAttested` stays `false` for it). When 0G Compute IS configured, the 
 from whatever model the selected provider serves — this codebase does not control or guarantee
 which model that is beyond requiring the provider to be TEE-verifiable at all
 (`selectProvider()`'s filter on `verifiability`).
+
+## 12. The Compute provider top-up amount is untested at cold-start scale.
+
+`packages/compute/src/attestedClient.ts`'s `DEFAULT_TOPUP_NEURON` (0.001 0G) is below the 0G
+Compute SDK's own `MIN_TRANSFER_AMOUNT_OG` (1 0G) — but that SDK constant is documented in the
+SDK's own source as a *recommended* floor for `transferFund`, not an enforced one: the SDK logs
+a warning and proceeds rather than throwing. This exact amount has been confirmed live, twice, on
+0G testnet, against an already-funded provider sub-account, with a real TEE-attested response
+(`processResponse() === true`) both times. What that live evidence does *not* cover: a
+brand-new provider sub-account starting from zero balance, where a 0.001 0G transfer could leave
+it under that specific provider's own on-chain locked-balance requirement and get inference
+requests rejected. Fixing this properly (e.g., sizing the top-up based on whether the sub-account
+already exists) is a real behavior change, not a one-line constant edit, and is out of scope for
+this MVP.

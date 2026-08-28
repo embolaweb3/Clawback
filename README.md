@@ -88,7 +88,7 @@ cp .env.example .env
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 # paste it into CLAWBACK_ENCRYPTION_KEY in .env
 
-pnpm test            # 65 tests across every package, no 0G credentials required
+pnpm test            # 74 tests across every package, no 0G credentials required
 pnpm --filter @clawback/web dev   # runs the app at http://localhost:3000
 ```
 
@@ -120,6 +120,35 @@ The last real run produced a receipt with all five commitments chained, `teeAtte
 and `chainTxHash: null` honestly reported (0G Compute/Chain weren't configured for that run),
 `allCryptographicChecksPassed: true` from the independent verifier, and a confirmed `403` when
 a second, cookie-less request tried to read the first request's case.
+
+## 9b. Live 0G verification (real transactions, not simulated)
+
+Beyond the honest-degradation demo above, this codebase's 0G integrations have been exercised
+for real, using operator-held funded keys that are **not** part of this repository (a
+`.gitignore`d `.env` — see `.env.example` for the variables). Anyone with their own funded 0G
+keys can reproduce this exact evidence; without them, the app correctly falls back to the
+unconfigured behavior described in §8/§9.
+
+- **0G Compute** (testnet): real on-chain `transferFund`, a real TEE-attested inference from
+  provider `0xa48f01287233509FD694a22Bf840225062E67836` (`qwen/qwen2.5-omni-7b`),
+  `processResponse() === true`.
+- **0G Storage** (testnet): real upload transactions, real per-upload storage fees, real root
+  hashes, byte-for-byte-identical round-trip downloads.
+- **0G Chain** (mainnet, chain ID 16661): `CaseAnchor.sol` deployed at
+  `0x91b58e90B9FeCe02952865C1337d64f9ceeC1A25` (deploy tx
+  `0xb1c76fa6ed08a86b94dd4870f27d941c02ac22b45b476614b0b26d0f4a234336`, block `42882257`), with
+  multiple real `anchor()` writes and independent `verify()` reads confirmed directly against
+  the live contract.
+- **Full lifecycle**: the real, unmodified `Orchestrator` (no mocks) driven end to end — real
+  Compute execution → real Storage upload → real mainnet Chain anchor → a receipt whose
+  `allCryptographicChecksPassed` was independently re-confirmed `true` by a fresh
+  `verifyReceipt()` call, and whose on-chain anchor was independently re-read from the contract
+  in a separate process.
+
+What this does **not** change: the counterparty-facing merchant action remains the sandbox
+simulator (§4, LIMITATIONS.md §4) — no real merchant was contacted, no real refund occurred.
+`receipt.environment` correctly says `"sandbox"` for every one of these runs, and
+`assertNoSandboxLeakage()` enforces that label can't silently flip to `"live"`.
 
 ## 10. Limitations
 

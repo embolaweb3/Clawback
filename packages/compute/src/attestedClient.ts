@@ -40,7 +40,21 @@ export interface AttestedChatResult {
 /** A minimal, non-zero top-up used only when a provider sub-account is
  *  under-funded. Kept small and constant for MVP — see LIMITATIONS.md on
  *  why this isn't a dynamic budgeting system yet. Units are neuron
- *  (the SDK's smallest unit), matching `transferFund`'s documented units. */
+ *  (the SDK's smallest unit), matching `transferFund`'s documented units.
+ *
+ *  This amount is well below the SDK's `MIN_TRANSFER_AMOUNT_OG` (1 0G,
+ *  see @0gfoundation/0g-compute-ts-sdk's ledger.js), which the SDK's own
+ *  source labels a *recommended* floor for `transferFund` — it logs a
+ *  warning and proceeds, it does not throw. The value the SDK actually
+ *  throws on (`MIN_LEDGER_BALANCE_OG`) gates a different operation,
+ *  first-time Ledger creation, which this path doesn't hit once a Ledger
+ *  already exists. Confirmed live on 0G testnet: this exact top-up
+ *  succeeded end-to-end (real attested inference, `processResponse() ===
+ *  true`) against an already-funded provider sub-account. The disclosed
+ *  risk this does NOT cover: transferring 0.001 0G to a *brand-new*
+ *  provider sub-account starting from zero could leave it under a given
+ *  provider's own locked-balance floor and get requests rejected — see
+ *  LIMITATIONS.md §12. */
 const DEFAULT_TOPUP_NEURON = BigInt(1) * BigInt(10 ** 15); // 0.001 0G
 
 export async function createBroker(config: ComputeConfig): Promise<ZGComputeNetworkBroker> {
