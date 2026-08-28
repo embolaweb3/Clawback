@@ -112,6 +112,27 @@ export function verifyReceipt(
     detail: "Recomputes chain(executionCommitment, outcome) and compares it to receipt.commitments.outcomeCommitment.",
   });
 
+  // 5b. Does the receipt's final commitment match a fresh recomputation
+  // from the outcome commitment plus the receipt's own receiptId and
+  // status? This is the check that closes the exact gap found during the
+  // pre-submission audit: without it, an attacker who can edit a stored
+  // or displayed receipt could forge `status` (or the `receiptCommitment`
+  // field itself) without detection, even though every earlier link in
+  // the chain — case, action, execution, outcome — was left intact.
+  const recomputedReceiptCommitment = chain(recomputedOutcomeCommitment, {
+    receiptId: receipt.receiptId,
+    status: receipt.status,
+  });
+  checks.push({
+    question: "Does the receipt's final commitment match a fresh recomputation of its own receiptId and status?",
+    result: recomputedReceiptCommitment === receipt.commitments.receiptCommitment,
+    strength: "cryptographically_verifiable",
+    detail:
+      "Recomputes chain(outcomeCommitment, { receiptId, status }) and compares it to " +
+      "receipt.commitments.receiptCommitment — this is what catches a forged status field " +
+      "or a forged receiptCommitment that the case/action/execution/outcome checks alone would miss.",
+  });
+
   // 6. Was the claimed outcome independently corroborated, or only self-reported?
   checks.push({
     question: "Was the claimed savings amount independently verified, or only claimed?",

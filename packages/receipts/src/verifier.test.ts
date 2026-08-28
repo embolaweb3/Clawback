@@ -42,6 +42,41 @@ describe("verifyReceipt", () => {
     expect(report.allCryptographicChecksPassed).toBe(false);
   });
 
+  it("detects a forged receiptCommitment even when every earlier link in the chain is intact (audit regression)", () => {
+    const fixture = makeFixture();
+    const receipt = buildReceipt(fixture);
+    const forgedReceipt = {
+      ...receipt,
+      commitments: { ...receipt.commitments, receiptCommitment: "0x" + "f".repeat(64) },
+    };
+
+    const report = verifyReceipt(forgedReceipt, fixture);
+
+    const finalCommitmentCheck = report.checks.find((c) =>
+      c.question.includes("fresh recomputation of its own receiptId and status"),
+    );
+    expect(finalCommitmentCheck?.result).toBe(false);
+    expect(report.allCryptographicChecksPassed).toBe(false);
+  });
+
+  it("detects a forged status left alongside the original (now-stale) receiptCommitment (audit regression)", () => {
+    const fixture = makeFixture(); // successful outcome by default
+    const receipt = buildReceipt(fixture);
+    expect(receipt.status).toBe("successful");
+
+    // The attack: flip the human-facing status without recomputing the
+    // commitment that's supposed to cover it.
+    const forgedReceipt = { ...receipt, status: "unsuccessful" as const };
+
+    const report = verifyReceipt(forgedReceipt, fixture);
+
+    const finalCommitmentCheck = report.checks.find((c) =>
+      c.question.includes("fresh recomputation of its own receiptId and status"),
+    );
+    expect(finalCommitmentCheck?.result).toBe(false);
+    expect(report.allCryptographicChecksPassed).toBe(false);
+  });
+
   it("labels a non-attested execution as not_independently_verifiable, never as verified", () => {
     const fixture = makeFixture();
     const unattested = {
