@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { LifecycleStepper } from "@/components/LifecycleStepper";
 
@@ -9,6 +9,31 @@ const ANALYSIS_STEPS = [
   "Identifying cancellation/refund opportunity...",
   "Preparing recommended action...",
 ];
+
+function Field({
+  id,
+  label,
+  hint,
+  children,
+}: {
+  id: string;
+  label: string;
+  hint?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="mb-5">
+      <label htmlFor={id} className="mb-1.5 block text-sm font-semibold text-ink">
+        {label}
+      </label>
+      {children}
+      {hint && <p className="mt-1.5 text-xs text-ink-faint">{hint}</p>}
+    </div>
+  );
+}
+
+const inputClass =
+  "w-full rounded-md border border-rule bg-paper-raised px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-faint transition-colors focus:border-signal focus:outline-none focus:ring-2 focus:ring-signal/20";
 
 export default function NewCasePage() {
   const router = useRouter();
@@ -57,19 +82,23 @@ export default function NewCasePage() {
 
   if (submitting) {
     return (
-      <main className="shell">
-        <h1>Your data is protected while we work.</h1>
-        <p>
-          The details below are sent to an attested execution path — not stored in the clear
-          on our own servers while your case is analyzed.
+      <main className="mx-auto max-w-xl px-5 py-16 sm:px-8">
+        <h1 className="mb-3 text-2xl font-extrabold text-ink">Your data is protected while we work.</h1>
+        <p className="mb-6 leading-relaxed text-ink-soft">
+          The details below are sent to an attested execution path — not stored in the clear on
+          our own servers while your case is analyzed.
         </p>
-        <div style={{ marginBottom: "1.5rem" }}>
+        <div className="mb-6">
           <LifecycleStepper current="ANALYZING" />
         </div>
-        <div className="card" role="status" aria-live="polite">
+        <div className="rounded-xl border border-rule bg-paper-raised p-6" role="status" aria-live="polite">
           {ANALYSIS_STEPS.map((step, i) => (
-            <div key={step} className="progress-line" style={{ opacity: i <= stepIndex ? 1 : 0.35 }}>
-              <span className="dot" />
+            <div
+              key={step}
+              className="flex items-center gap-3 py-1.5 text-sm text-ink-soft transition-opacity"
+              style={{ opacity: i <= stepIndex ? 1 : 0.35 }}
+            >
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-signal motion-safe:animate-soft-pulse" />
               {step}
             </div>
           ))}
@@ -79,33 +108,41 @@ export default function NewCasePage() {
   }
 
   return (
-    <main className="shell">
-      <h1>Tell us what happened.</h1>
-      <p>We'll investigate the bill and prepare the next action — you approve before anything sends.</p>
+    <main className="mx-auto max-w-xl px-5 py-16 sm:px-8">
+      <h1 className="mb-2 text-2xl font-extrabold text-ink sm:text-3xl">Tell us what happened.</h1>
+      <p className="mb-6 leading-relaxed text-ink-soft">
+        We'll investigate the bill and prepare the next action — you approve before anything sends.
+      </p>
 
-      <div style={{ marginBottom: "1.75rem" }}>
+      <div className="mb-7">
         <LifecycleStepper current="DRAFT" />
       </div>
 
       {error && (
-        <div className="error-box" role="alert">
+        <div
+          role="alert"
+          className="mb-5 rounded-md border border-ember/30 bg-ember-soft px-4 py-3 text-sm font-medium text-ember"
+        >
           {error}
         </div>
       )}
 
-      <form onSubmit={onSubmit} className="card">
-        <div className="field">
-          <label htmlFor="merchant">Company</label>
+      <form onSubmit={onSubmit} className="rounded-xl border border-rule bg-paper-raised p-6 shadow-card">
+        <Field id="merchant" label="Company">
           <input
             id="merchant"
             required
             value={merchantName}
             onChange={(e) => setMerchantName(e.target.value)}
             placeholder="e.g. Acme Streaming"
+            className={inputClass}
           />
-        </div>
-        <div className="field">
-          <label htmlFor="account">Last digits of your account</label>
+        </Field>
+        <Field
+          id="account"
+          label="Last digits of your account"
+          hint="Never your full account number — just enough to identify the case to you."
+        >
           <input
             id="account"
             required
@@ -113,11 +150,10 @@ export default function NewCasePage() {
             value={accountIdentifierLast4}
             onChange={(e) => setAccountIdentifierLast4(e.target.value)}
             placeholder="4242"
+            className={inputClass}
           />
-          <div className="hint">Never your full account number — just enough to identify the case to you.</div>
-        </div>
-        <div className="field">
-          <label htmlFor="details">What's the subscription?</label>
+        </Field>
+        <Field id="details" label="What's the subscription?">
           <textarea
             id="details"
             required
@@ -125,10 +161,10 @@ export default function NewCasePage() {
             value={subscriptionDetails}
             onChange={(e) => setSubscriptionDetails(e.target.value)}
             placeholder="Premium plan, $19.99/month, billed on the 3rd."
+            className={`${inputClass} resize-y`}
           />
-        </div>
-        <div className="field">
-          <label htmlFor="outcome">What do you want to happen?</label>
+        </Field>
+        <Field id="outcome" label="What do you want to happen?">
           <textarea
             id="outcome"
             required
@@ -136,9 +172,13 @@ export default function NewCasePage() {
             value={desiredOutcome}
             onChange={(e) => setDesiredOutcome(e.target.value)}
             placeholder="Cancel it and refund this month's $19.99 charge — I never used it."
+            className={`${inputClass} resize-y`}
           />
-        </div>
-        <button type="submit" className="btn btn-primary">
+        </Field>
+        <button
+          type="submit"
+          className="w-full rounded-md bg-signal px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 sm:w-auto"
+        >
           Investigate this bill
         </button>
       </form>

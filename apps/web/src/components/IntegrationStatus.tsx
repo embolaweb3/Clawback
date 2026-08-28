@@ -41,23 +41,44 @@ export function useIntegrationStatus(): StatusResponse | null {
 }
 
 function networkLabel(status: ComponentStatus): string {
-  if (!status.configured) return "UNCONFIGURED";
-  if (status.network === "mainnet") return "0G MAINNET";
-  if (status.network === "testnet") return "0G TESTNET";
-  return "0G LIVE";
+  if (!status.configured) return "Unconfigured";
+  if (status.network === "mainnet") return "0G Mainnet";
+  if (status.network === "testnet") return "0G Testnet";
+  return "0G Live";
 }
 
-export function IntegrationBadge({ component }: { component: "compute" | "storage" | "chain" }) {
+/**
+ * The status pill used everywhere an integration's live/unconfigured
+ * state is shown. The pulse on a live badge is restrained on purpose —
+ * `motion-safe:` keeps it off entirely under prefers-reduced-motion.
+ */
+export function PremiumStatusBadge({ component }: { component: "compute" | "storage" | "chain" }) {
   const status = useIntegrationStatus();
   const componentStatus = status?.[component];
 
   if (!componentStatus) {
-    return <span className="pill pill-gold">CHECKING…</span>;
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-rule px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-wide text-ink-faint">
+        Checking
+      </span>
+    );
   }
 
+  const live = componentStatus.configured;
+
   return (
-    <span className={`pill ${componentStatus.configured ? "pill-signal" : "pill-gold"}`}>
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-wide ${
+        live ? "border-signal/30 bg-signal-soft text-signal" : "border-gold/30 bg-gold-soft text-gold"
+      }`}
+    >
+      <span
+        className={`h-1.5 w-1.5 rounded-full ${live ? "bg-signal motion-safe:animate-soft-pulse" : "bg-gold"}`}
+        aria-hidden="true"
+      />
       {networkLabel(componentStatus)}
     </span>
   );
 }
+
+export { PremiumStatusBadge as IntegrationBadge };

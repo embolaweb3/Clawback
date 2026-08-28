@@ -69,18 +69,22 @@ export function CaseView({ initialCase }: { initialCase: CaseSummary }) {
   return (
     <>
       {!isReceiptView && (
-        <div style={{ marginBottom: "1.75rem" }}>
+        <div className="mb-7">
           <LifecycleStepper current={executing ? "EXECUTING" : caseData.state} />
         </div>
       )}
 
       {executing && (
         <>
-          <h1>Executing your approved request.</h1>
-          <div className="card" role="status" aria-live="polite">
+          <h1 className="mb-3 text-2xl font-extrabold text-ink">Executing your approved request.</h1>
+          <div className="rounded-xl border border-rule bg-paper-raised p-6" role="status" aria-live="polite">
             {EXECUTING_STEPS.map((step, i) => (
-              <div key={step} className="progress-line" style={{ opacity: i <= executingStep ? 1 : 0.35 }}>
-                <span className="dot" />
+              <div
+                key={step}
+                className="flex items-center gap-3 py-1.5 text-sm text-ink-soft transition-opacity"
+                style={{ opacity: i <= executingStep ? 1 : 0.35 }}
+              >
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-signal motion-safe:animate-soft-pulse" />
                 {step}
               </div>
             ))}
@@ -90,37 +94,43 @@ export function CaseView({ initialCase }: { initialCase: CaseSummary }) {
 
       {!executing && caseData.state === "AWAITING_APPROVAL" && caseData.proposal && (
         <>
-          <h1>Review before anything is sent.</h1>
+          <h1 className="mb-3 text-2xl font-extrabold text-ink">Review before anything is sent.</h1>
           {error && (
-            <div className="error-box" role="alert">
+            <div role="alert" className="mb-5 rounded-md border border-ember/30 bg-ember-soft px-4 py-3 text-sm font-medium text-ember">
               {error}
             </div>
           )}
-          <div className="card">
-            <h2>What Clawback wants to send</h2>
-            <p style={{ whiteSpace: "pre-wrap", color: "var(--ink)" }}>{caseData.proposal.exactMessage}</p>
-            <hr className="divider" />
-            <h2>Why</h2>
-            <p>{caseData.proposal.summary}</p>
+          <div className="mb-5 rounded-xl border border-rule bg-paper-raised p-6 shadow-card">
+            <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-ink-faint">What Clawback wants to send</h2>
+            <p className="whitespace-pre-wrap text-[0.95rem] leading-relaxed text-ink">{caseData.proposal.exactMessage}</p>
+            <hr className="my-4 border-rule" />
+            <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-ink-faint">Why</h2>
+            <p className="text-sm text-ink-soft">{caseData.proposal.summary}</p>
             {caseData.proposal.estimatedRecoveryCents !== null && (
               <>
-                <hr className="divider" />
-                <h2>Potential recovery</h2>
-                <p style={{ color: "var(--ink)", fontWeight: 600 }}>
+                <hr className="my-4 border-rule" />
+                <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-ink-faint">Potential recovery</h2>
+                <p className="text-lg font-bold text-ink">
                   ${(caseData.proposal.estimatedRecoveryCents / 100).toFixed(2)}
                 </p>
               </>
             )}
           </div>
-          <p style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--ink)" }}>
+          <p className="mb-4 text-sm font-semibold text-ink">
             You are approving this exact message. Nothing is sent until you approve — and
             approval does not guarantee the merchant honors the request.
           </p>
-          <div style={{ display: "flex", gap: "0.75rem" }}>
-            <button className="btn btn-primary" onClick={approve}>
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={approve}
+              className="rounded-md bg-signal px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            >
               Approve &amp; Send
             </button>
-            <button className="btn btn-secondary" onClick={reject}>
+            <button
+              onClick={reject}
+              className="rounded-md border border-rule-strong bg-paper-raised px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-ink-faint"
+            >
               Don't send this
             </button>
           </div>
@@ -129,20 +139,24 @@ export function CaseView({ initialCase }: { initialCase: CaseSummary }) {
 
       {!executing && caseData.state === "REJECTED" && (
         <>
-          <h1>Case closed.</h1>
-          <p>You chose not to send this request. No action was taken and nothing was recorded as an outcome.</p>
+          <h1 className="mb-3 text-2xl font-extrabold text-ink">Case closed.</h1>
+          <p className="text-ink-soft">
+            You chose not to send this request. No action was taken and nothing was recorded as an outcome.
+          </p>
         </>
       )}
 
       {!executing && (caseData.state === "EXECUTION_FAILED" || caseData.state === "OUTCOME_UNVERIFIED") && (
         <>
-          <h1>No response yet.</h1>
-          <p>
+          <h1 className="mb-3 text-2xl font-extrabold text-ink">No response yet.</h1>
+          <p className="mb-4 text-ink-soft">
             {caseData.outcome?.outcomeType === "no_response"
               ? "The counterparty didn't respond within this case's window. No fee was charged — Clawback only charges against verified savings."
               : "The request didn't complete successfully."}
           </p>
-          <span className="pill pill-gold">{caseData.state}</span>
+          <span className="inline-flex rounded-full bg-gold-soft px-3 py-1 text-xs font-bold uppercase tracking-wide text-gold">
+            {caseData.state}
+          </span>
         </>
       )}
 
@@ -159,8 +173,10 @@ export function CaseView({ initialCase }: { initialCase: CaseSummary }) {
         !isReceiptView &&
         !["AWAITING_APPROVAL", "REJECTED", "EXECUTION_FAILED", "OUTCOME_UNVERIFIED"].includes(caseData.state) && (
           <>
-            <h1>Working on it.</h1>
-            <span className="pill pill-gold">{caseData.state}</span>
+            <h1 className="mb-3 text-2xl font-extrabold text-ink">Working on it.</h1>
+            <span className="inline-flex rounded-full bg-gold-soft px-3 py-1 text-xs font-bold uppercase tracking-wide text-gold">
+              {caseData.state}
+            </span>
           </>
         )}
     </>

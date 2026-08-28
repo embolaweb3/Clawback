@@ -25,34 +25,53 @@ const FAILED_STATES: ReadonlySet<CaseState> = new Set([
   "EXPIRED",
 ]);
 
+type StepStatus = "done" | "current" | "upcoming" | "failed";
+
+const DOT_STYLES: Record<StepStatus, string> = {
+  done: "bg-signal text-white",
+  current: "bg-signal text-white motion-safe:animate-soft-pulse",
+  upcoming: "bg-paper-sunken text-ink-faint",
+  failed: "bg-ember text-white",
+};
+
+const LABEL_STYLES: Record<StepStatus, string> = {
+  done: "text-ink",
+  current: "text-ink font-semibold",
+  upcoming: "text-ink-faint",
+  failed: "text-ember font-semibold",
+};
+
 /**
- * The seven-step lifecycle, in both its two roles:
- *  - static (no `current`): the landing page's illustration of what
- *    Clawback always does, in order.
- *  - live (`current` set): the actual case's real state, reflected
- *    exactly — never a fabricated "almost there" position.
+ * The seven-step lifecycle, in both its two roles: a static illustration
+ * (no `current`) on the landing/how-it-works pages, and the live position
+ * of a real case (`current` set) — never a fabricated "almost there".
  */
 export function LifecycleStepper({ current }: { current?: CaseState }) {
   const currentIndex = current ? STEPS.findIndex((s) => s.states.includes(current)) : -1;
   const failed = current ? FAILED_STATES.has(current) : false;
 
   return (
-    <ol className="stepper" aria-label="Case lifecycle">
+    <ol
+      className="flex flex-col gap-0 rounded-xl border border-rule bg-paper-raised p-1 sm:flex-row"
+      aria-label="Case lifecycle"
+    >
       {STEPS.map((step, i) => {
-        let status: "done" | "current" | "upcoming" | "failed" = "upcoming";
-        if (currentIndex === -1) {
-          status = "upcoming"; // static illustration mode
-        } else if (i < currentIndex) {
-          status = "done";
-        } else if (i === currentIndex) {
-          status = failed ? "failed" : "current";
+        let status: StepStatus = "upcoming";
+        if (currentIndex !== -1) {
+          if (i < currentIndex) status = "done";
+          else if (i === currentIndex) status = failed ? "failed" : "current";
         }
         return (
-          <li key={step.label} className={`stepper-step stepper-step--${status}`}>
-            <span className="stepper-index" aria-hidden="true">
-              {String(i + 1).padStart(2, "0")}
+          <li key={step.label} className="flex flex-1 items-center gap-3 px-3 py-3 sm:flex-col sm:items-start sm:gap-2">
+            <span
+              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[0.68rem] font-bold tabular-nums transition-colors ${DOT_STYLES[status]}`}
+              aria-hidden="true"
+            >
+              {status === "done" ? "✓" : i + 1}
             </span>
-            <span className="stepper-label">{step.label}</span>
+            <span className={`text-[0.83rem] leading-tight transition-colors ${LABEL_STYLES[status]}`}>
+              {step.label}
+            </span>
           </li>
         );
       })}

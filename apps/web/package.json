@@ -10,20 +10,22 @@
   },
   "dependencies": {
     "@clawback/agent": "workspace:*",
-    "@clawback/shared": "workspace:*",
+    "@clawback/chain": "workspace:*",
+    "@clawback/compute": "workspace:*",
+    "@clawback/payments": "workspace:*",
     "@clawback/privacy": "workspace:*",
     "@clawback/providers": "workspace:*",
-    "@clawback/compute": "workspace:*",
-    "@clawback/storage": "workspace:*",
-    "@clawback/chain": "workspace:*",
-    "@clawback/payments": "workspace:*",
     "@clawback/receipts": "workspace:*",
+    "@clawback/shared": "workspace:*",
+    "@clawback/storage": "workspace:*",
     "next": "^15.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1"
+    "@types/react-dom": "^18.3.1",
+    "tailwindcss": "^4.3.3"
   }
 }
