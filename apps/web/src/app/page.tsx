@@ -23,12 +23,13 @@ export default function HomePage() {
               Private billing advocate
             </p>
             <h1 className="max-w-2xl text-4xl font-extrabold leading-[1.08] text-ink sm:text-5xl">
-              A private AI advocate for billing disputes, with a verifiable evidence trail.
+              A cryptographically verifiable record of AI-driven recovery actions.
             </h1>
             <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-soft">
-              Clawback fights subscription and billing disputes on your behalf — and instead of
-              asking you to trust its word for what happened, it gives you a receipt whose claims
-              anyone can independently recompute.
+              AI agents can recommend and execute actions on your behalf — but after the fact,
+              it's hard to prove what was requested, what you approved, what actually ran, and
+              whether the resulting record was altered. Clawback builds a tamper-evident chain
+              across every one of those stages, so you never have to take its word for it.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -70,6 +71,29 @@ export default function HomePage() {
             never met — the exact failure mode this project exists to make structurally harder to
             repeat.
           </p>
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-5xl px-5 pb-4 sm:px-8">
+        <Reveal>
+          <p className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-ink-faint">
+            Three separate claims
+          </p>
+          <h2 className="mb-6 max-w-xl text-2xl font-bold text-ink">Never merged into one word</h2>
+          <div className="grid gap-4 rounded-xl border border-rule bg-paper-raised p-6 sm:grid-cols-3">
+            <div>
+              <p className="text-[0.68rem] font-bold uppercase tracking-wide text-signal">01 — Integrity</p>
+              <p className="mt-1 text-sm text-ink-soft">Is the receipt internally consistent? Established strongly.</p>
+            </div>
+            <div>
+              <p className="text-[0.68rem] font-bold uppercase tracking-wide text-gold">02 — Execution evidence</p>
+              <p className="mt-1 text-sm text-ink-soft">What does 0G Compute attest to? Present when configured.</p>
+            </div>
+            <div>
+              <p className="text-[0.68rem] font-bold uppercase tracking-wide text-ink-faint">03 — Real-world outcome</p>
+              <p className="mt-1 text-sm text-ink-soft">Did actual money move? Not independently established.</p>
+            </div>
+          </div>
         </Reveal>
       </section>
 
@@ -188,8 +212,12 @@ export default function HomePage() {
           <p className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-ink-faint">Business model</p>
           <h2 className="mb-3 text-2xl font-bold text-ink">You only pay when it works</h2>
           <p className="max-w-2xl leading-relaxed text-ink-soft">
-            Clawback charges a percentage of independently verified savings — never a flat fee,
-            and never a charge against a case that recovered nothing.
+            Clawback charges a percentage of confirmed savings — never a flat fee, and never a
+            charge against a case that recovered nothing. See{" "}
+            <Link href="/how-it-works" className="text-signal underline underline-offset-2">
+              how privacy verification works
+            </Link>{" "}
+            for exactly what "confirmed" does and doesn't mean today.
           </p>
         </Reveal>
       </section>

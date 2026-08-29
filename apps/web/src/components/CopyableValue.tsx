@@ -1,24 +1,26 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 function shorten(value: string, head = 8, tail = 6): string {
   if (value.length <= head + tail + 3) return value;
   return `${value.slice(0, head)}…${value.slice(-tail)}`;
 }
 
-function CopyIcon({ copied }: { copied: boolean }) {
-  if (copied) {
-    return (
-      <svg viewBox="0 0 16 16" width="13" height="13" fill="none" aria-hidden="true" className="animate-reveal">
-        <path d="M3 8.5 6.2 12 13 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    );
-  }
+function CopyIcon() {
   return (
     <svg viewBox="0 0 16 16" width="13" height="13" fill="none" aria-hidden="true">
       <rect x="5.5" y="5.5" width="8" height="8" rx="1.4" stroke="currentColor" strokeWidth="1.3" />
       <path d="M3.5 10.5V3.9a1 1 0 0 1 1-1H10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg viewBox="0 0 16 16" width="13" height="13" fill="none" aria-hidden="true">
+      <path d="M3 8.5 6.2 12 13 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -71,11 +73,22 @@ export function CopyableValue({
         type="button"
         onClick={copy}
         aria-label={`Copy ${label ?? "value"} to clipboard`}
-        className={`inline-flex shrink-0 items-center justify-center rounded p-1 transition-colors ${
+        className={`relative inline-flex h-4 w-4 shrink-0 items-center justify-center rounded transition-colors ${
           copied ? "text-signal" : "text-ink-faint hover:text-ink"
         }`}
       >
-        <CopyIcon copied={copied} />
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.span
+            key={copied ? "check" : "copy"}
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.6 }}
+            transition={{ duration: 0.15 }}
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            {copied ? <CheckIcon /> : <CopyIcon />}
+          </motion.span>
+        </AnimatePresence>
       </button>
     </span>
   );

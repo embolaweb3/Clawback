@@ -15,7 +15,7 @@ const STEPS: readonly Step[] = [
   { label: "Your approval", states: ["AWAITING_APPROVAL", "APPROVED"] },
   { label: "Execution", states: ["EXECUTING"] },
   { label: "Outcome", states: ["OUTCOME_PENDING", "EXECUTION_FAILED", "OUTCOME_UNVERIFIED", "REJECTED", "EXPIRED"] },
-  { label: "Verifiable receipt", states: ["VERIFIED_SUCCESS"] },
+  { label: "Receipt", states: ["VERIFIED_SUCCESS"] },
 ];
 
 const FAILED_STATES: ReadonlySet<CaseState> = new Set([

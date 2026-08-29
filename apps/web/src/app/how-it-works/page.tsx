@@ -8,8 +8,11 @@ const STEP_NOTES = [
   { label: "Proposed action", detail: "Clawback drafts the exact message it plans to send." },
   { label: "Your approval", detail: "Nothing sends until you approve this exact wording." },
   { label: "Execution", detail: "The approved request goes out — sandboxed in this deployment." },
-  { label: "Outcome", detail: "What the counterparty (or sandbox) reports back." },
-  { label: "Verifiable receipt", detail: "A chain of commitments anyone can independently recompute." },
+  { label: "Outcome", detail: "What the counterparty (or sandbox) reports back — a claim, not a bank record." },
+  {
+    label: "Receipt",
+    detail: "Integrity is independently verifiable. This is not proof the financial outcome is real.",
+  },
 ];
 
 export default function HowItWorksPage() {
@@ -84,6 +87,24 @@ export default function HowItWorksPage() {
             cryptographically checkable, which are trusted claims from a counterparty, and which
             this system is honest enough to say it simply can't prove.
           </p>
+        </div>
+      </section>
+
+      <section className="mb-16 rounded-xl border border-rule bg-paper-sunken/60 p-6">
+        <h2 className="mb-3 text-base font-bold text-ink">Three separate claims, never merged into one</h2>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div>
+            <p className="text-[0.68rem] font-bold uppercase tracking-wide text-signal">01 — Integrity</p>
+            <p className="mt-1 text-sm text-ink-soft">Is the receipt internally consistent? This MVP establishes this strongly.</p>
+          </div>
+          <div>
+            <p className="text-[0.68rem] font-bold uppercase tracking-wide text-gold">02 — Execution evidence</p>
+            <p className="mt-1 text-sm text-ink-soft">What does 0G Compute attest to? Present when Compute is configured.</p>
+          </div>
+          <div>
+            <p className="text-[0.68rem] font-bold uppercase tracking-wide text-ink-faint">03 — Real-world outcome</p>
+            <p className="mt-1 text-sm text-ink-soft">Did actual money move? Not independently established by this MVP.</p>
+          </div>
         </div>
       </section>
 

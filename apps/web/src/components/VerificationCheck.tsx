@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import type { VerificationReport } from "@clawback/receipts";
 
 type Check = VerificationReport["checks"][number];
@@ -22,10 +25,15 @@ function badgeFor(check: Check): { label: string; className: string } {
  * like cryptographic proof, and an unconfigured check must never look
  * like a failure.
  */
-export function VerificationCheckRow({ check }: { check: Check }) {
+export function VerificationCheckRow({ check, index = 0 }: { check: Check; index?: number }) {
   const badge = badgeFor(check);
   return (
-    <div className="border-b border-rule py-4 last:border-b-0">
+    <motion.div
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
+      className="border-b border-rule py-4 last:border-b-0"
+    >
       <div className="flex items-start justify-between gap-4">
         <span className="text-sm font-semibold text-ink">{check.question}</span>
         <span
@@ -35,6 +43,6 @@ export function VerificationCheckRow({ check }: { check: Check }) {
         </span>
       </div>
       <p className="mt-1.5 text-[0.83rem] leading-relaxed text-ink-faint">{check.detail}</p>
-    </div>
+    </motion.div>
   );
 }

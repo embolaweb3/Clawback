@@ -5,6 +5,7 @@ import type { CaseSummary } from "@clawback/agent";
 import type { VerificationReport } from "@clawback/receipts";
 import { ReceiptCard } from "./ReceiptCard";
 import { LifecycleStepper } from "@/components/LifecycleStepper";
+import { EnvironmentBanner } from "@/components/EnvironmentBanner";
 
 const EXECUTING_STEPS = ["Sending your request...", "Awaiting a response...", "Confirming the outcome..."];
 
@@ -69,9 +70,14 @@ export function CaseView({ initialCase }: { initialCase: CaseSummary }) {
   return (
     <>
       {!isReceiptView && (
-        <div className="mb-7">
-          <LifecycleStepper current={executing ? "EXECUTING" : caseData.state} />
-        </div>
+        <>
+          <div className="mb-4">
+            <EnvironmentBanner environment={caseData.environment} />
+          </div>
+          <div className="mb-7">
+            <LifecycleStepper current={executing ? "EXECUTING" : caseData.state} />
+          </div>
+        </>
       )}
 
       {executing && (
@@ -151,7 +157,7 @@ export function CaseView({ initialCase }: { initialCase: CaseSummary }) {
           <h1 className="mb-3 text-2xl font-extrabold text-ink">No response yet.</h1>
           <p className="mb-4 text-ink-soft">
             {caseData.outcome?.outcomeType === "no_response"
-              ? "The counterparty didn't respond within this case's window. No fee was charged — Clawback only charges against verified savings."
+              ? "The counterparty didn't respond within this case's window. No fee was charged — Clawback never charges against an unconfirmed outcome."
               : "The request didn't complete successfully."}
           </p>
           <span className="inline-flex rounded-full bg-gold-soft px-3 py-1 text-xs font-bold uppercase tracking-wide text-gold">

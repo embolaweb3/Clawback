@@ -47,6 +47,12 @@ export interface CaseSummary {
   readonly proposal: ActionProposal | null;
   readonly outcome: OutcomeEvidence | null;
   readonly receipt: ClawbackReceipt | null;
+  /** Which real-world boundary this case's action will run (or ran)
+   *  through. Previously only visible on the receipt, once one existed —
+   *  exposed here too so the frontend can disclose "sandbox" honestly
+   *  during analysis/execution as well, not only after the fact. This is
+   *  a read of a field CaseRecord already carries; no new decision logic. */
+  readonly environment: "sandbox" | "live";
   readonly degradedReason: string | null;
   readonly createdAt: string;
   readonly updatedAt: string;
@@ -60,6 +66,7 @@ export function toSummary(record: CaseRecord): CaseSummary {
     proposal: record.proposal,
     outcome: record.outcome,
     receipt: record.receipt,
+    environment: record.environment,
     degradedReason: record.degradedReason,
     createdAt: record.createdAt,
     updatedAt: record.updatedAt,
