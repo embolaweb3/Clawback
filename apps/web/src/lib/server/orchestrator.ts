@@ -1,4 +1,4 @@
-import { join } from "node:path";
+import { resolve } from "node:path";
 import { FileCaseStore, Orchestrator } from "@clawback/agent";
 import { ComputeClient } from "@clawback/compute";
 import { SandboxSubscriptionProvider } from "@clawback/providers";
@@ -36,7 +36,11 @@ function requireEncryptionKey(): string {
 export function getOrchestrator(): Orchestrator {
   if (orchestratorSingleton) return orchestratorSingleton;
 
-  const dataDir = join(process.cwd(), process.env.CLAWBACK_DATA_DIR ?? ".clawback-data");
+  // resolve(), not join(): CLAWBACK_DATA_DIR may be an absolute override
+  // (e.g. /tmp/clawback-data on a serverless host with a read-only
+  // filesystem — see .env.example and LIMITATIONS.md §8). join() would
+  // silently concatenate it onto cwd instead of honoring it.
+  const dataDir = resolve(process.cwd(), process.env.CLAWBACK_DATA_DIR ?? ".clawback-data");
   const store = new FileCaseStore(dataDir);
   const compute = new ComputeClient(process.env);
   const provider = new SandboxSubscriptionProvider();
