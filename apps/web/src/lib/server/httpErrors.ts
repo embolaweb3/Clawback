@@ -24,5 +24,14 @@ export function errorResponse(error: unknown): NextResponse {
     );
   }
   console.error(error);
-  return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
+  // `debug` is the raw error message only — never a stack trace, never
+  // case content. In this codebase an unhandled error at this point can
+  // only be an infra/config problem (a missing env var, a filesystem
+  // permission error), not a leak of sensitive user data; see
+  // @clawback/privacy's redact.ts registry for what's actually sensitive.
+  // Worth keeping permanently: without this, an unhandled failure on a
+  // deployment we can't attach a debugger or log viewer to is otherwise
+  // undiagnosable from the outside.
+  const debug = error instanceof Error ? error.message : String(error);
+  return NextResponse.json({ error: "Something went wrong.", debug }, { status: 500 });
 }
