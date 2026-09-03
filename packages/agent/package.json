@@ -4,15 +4,18 @@
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
-  "exports": { ".": "./src/index.ts" },
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "dependencies": {
-    "@clawback/shared": "workspace:*",
+    "@clawback/chain": "workspace:*",
+    "@clawback/compute": "workspace:*",
+    "@clawback/payments": "workspace:*",
     "@clawback/privacy": "workspace:*",
     "@clawback/providers": "workspace:*",
-    "@clawback/compute": "workspace:*",
+    "@clawback/receipts": "workspace:*",
+    "@clawback/shared": "workspace:*",
     "@clawback/storage": "workspace:*",
-    "@clawback/chain": "workspace:*",
-    "@clawback/payments": "workspace:*",
-    "@clawback/receipts": "workspace:*"
+    "@upstash/redis": "^1.38.3"
   }
 }

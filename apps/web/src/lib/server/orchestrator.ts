@@ -1,5 +1,5 @@
 import { resolve } from "node:path";
-import { FileCaseStore, Orchestrator } from "@clawback/agent";
+import { FileCaseStore, KvCaseStore, Orchestrator, loadKvConfig, type CaseStore } from "@clawback/agent";
 import { ComputeClient } from "@clawback/compute";
 import { SandboxSubscriptionProvider } from "@clawback/providers";
 import { LocalSettlementLedger } from "@clawback/payments";
@@ -33,15 +33,27 @@ function requireEncryptionKey(): string {
   return encryptionKeySingleton;
 }
 
-export function getOrchestrator(): Orchestrator {
-  if (orchestratorSingleton) return orchestratorSingleton;
+/** Prefers a Redis-backed store (Vercel Marketplace Upstash integration)
+ *  when configured — the durable option for a serverless deployment,
+ *  where FileCaseStore's local-disk state is invisible to any other
+ *  instance (see LIMITATIONS.md §8). Falls back to FileCaseStore so local
+ *  development and any non-serverless deployment need nothing extra. */
+function buildCaseStore(): CaseStore {
+  const kvConfig = loadKvConfig(process.env);
+  if (kvConfig) return new KvCaseStore(kvConfig);
 
   // resolve(), not join(): CLAWBACK_DATA_DIR may be an absolute override
   // (e.g. /tmp/clawback-data on a serverless host with a read-only
-  // filesystem — see .env.example and LIMITATIONS.md §8). join() would
-  // silently concatenate it onto cwd instead of honoring it.
+  // filesystem). join() would silently concatenate it onto cwd instead
+  // of honoring it.
   const dataDir = resolve(process.cwd(), process.env.CLAWBACK_DATA_DIR ?? ".clawback-data");
-  const store = new FileCaseStore(dataDir);
+  return new FileCaseStore(dataDir);
+}
+
+export function getOrchestrator(): Orchestrator {
+  if (orchestratorSingleton) return orchestratorSingleton;
+
+  const store = buildCaseStore();
   const compute = new ComputeClient(process.env);
   const provider = new SandboxSubscriptionProvider();
   const settlementLedger = new LocalSettlementLedger();

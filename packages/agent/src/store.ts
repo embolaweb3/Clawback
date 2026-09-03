@@ -1,5 +1,6 @@
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { Redis } from "@upstash/redis";
 import { applyTransition, type CaseEvent } from "@clawback/shared";
 import type { CaseRecord } from "./caseRecord.js";
 
@@ -137,5 +138,58 @@ export class FileCaseStore extends BaseCaseStore {
   protected async save(record: CaseRecord): Promise<void> {
     await mkdir(this.dataDir, { recursive: true });
     await writeFile(this.pathFor(record.caseId), JSON.stringify(record, null, 2), "utf8");
+  }
+}
+
+/** Accepts either naming convention a Vercel Redis/Upstash integration
+ *  might inject — the Marketplace integration's docs and the
+ *  `@upstash/redis` SDK's own `fromEnv()` disagree on this in practice
+ *  (a known point of confusion), so this checks both rather than trusting
+ *  one. Returns null — not a throw — when neither pair is set, matching
+ *  every other `loadXConfig` in this codebase (see LIMITATIONS.md §8). */
+export function loadKvConfig(
+  env: NodeJS.ProcessEnv = process.env,
+): { readonly url: string; readonly token: string } | null {
+  const url = env.KV_REST_API_URL ?? env.UPSTASH_REDIS_REST_URL;
+  const token = env.KV_REST_API_TOKEN ?? env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return null;
+  return { url, token };
+}
+
+/**
+ * One Redis key per case, via a Vercel Marketplace Redis (Upstash)
+ * integration. This is the durable alternative to `FileCaseStore` for a
+ * serverless deployment: a serverless function's local filesystem is
+ * read-only outside /tmp, and even /tmp is per-instance and ephemeral —
+ * a case written by the instance that handled case creation is simply
+ * absent from a different instance handling the next request. Redis is
+ * external, shared state, so every instance sees the same data.
+ * `@upstash/redis`'s REST client JSON-serializes/deserializes plain
+ * objects automatically — no manual `JSON.stringify`/`parse` needed.
+ */
+export class KvCaseStore extends BaseCaseStore {
+  private readonly redis: Redis;
+
+  constructor(config: { readonly url: string; readonly token: string }) {
+    super();
+    this.redis = new Redis({ url: config.url, token: config.token });
+  }
+
+  private keyFor(caseId: string): string {
+    return `clawback:case:${caseId}`;
+  }
+
+  async create(record: CaseRecord): Promise<void> {
+    await this.save(record);
+  }
+
+  async get(caseId: string): Promise<CaseRecord> {
+    const record = await this.redis.get<CaseRecord>(this.keyFor(caseId));
+    if (!record) throw new CaseNotFoundError(caseId);
+    return record;
+  }
+
+  protected async save(record: CaseRecord): Promise<void> {
+    await this.redis.set(this.keyFor(record.caseId), record);
   }
 }
