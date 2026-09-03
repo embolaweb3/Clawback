@@ -70,6 +70,13 @@ traffic (no locking, no transactions). `LocalSettlementLedger` doesn't persist a
 server restart. Both have a clean interface (`CaseStore`, `SettlementLedger`) a real deployment
 would implement against Postgres/a real payment processor without touching `Orchestrator`.
 
+On a serverless host specifically (this app's Vercel deployment included), the deployed
+filesystem is read-only outside `/tmp` — `FileCaseStore`'s `mkdir`/`writeFile` throws `EACCES`
+on the very first case unless `CLAWBACK_DATA_DIR` is pointed at `/tmp` there, and even then
+`/tmp` is per-instance and ephemeral, so a case can occasionally become unreachable if a later
+request lands on a different cold instance. See `.env.example` for the exact variable; the real
+fix is the Postgres/KV swap mentioned above, not a `/tmp` path.
+
 ## 9. There is no real authentication.
 
 `getOrCreateOwnerId()` issues an anonymous per-browser cookie. It's enough to make ownership
